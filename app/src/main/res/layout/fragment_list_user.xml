@@ -1,0 +1,25 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/dp_10"
+    tools:context="com.example.administrator.training3c_27112017.ListUserFragment"
+    >
+
+    <TextView
+        android:id="@+id/listUserTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/list_user"
+        android:textSize="@dimen/sp_40"
+        android:textColor="@color/colorBlack"
+        android:layout_centerHorizontal="true"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/listUserRecyclerView"
+        android:layout_below="@+id/listUserTextView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        ></android.support.v7.widget.RecyclerView>
+
+</RelativeLayout>
