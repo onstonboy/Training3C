@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import com.example.administrator.training3c_27112017.R;
 import com.example.administrator.training3c_27112017.User;
+import com.example.administrator.training3c_27112017.interfaces.OnItemRecyclerViewClick;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +20,7 @@ public class ListUserRecyclerViewAdapter extends RecyclerView.Adapter<ListUserRe
 
     private List<User> mUsers = new ArrayList<>();
     private Context mContext;
+    private OnItemRecyclerViewClick mOnItemRecyclerViewClick;
 
     public ListUserRecyclerViewAdapter(Context context) {
         mContext = context;
@@ -33,15 +35,19 @@ public class ListUserRecyclerViewAdapter extends RecyclerView.Adapter<ListUserRe
         notifyDataSetChanged();
     }
 
+    public void setOnItemRecyclerViewClick(OnItemRecyclerViewClick onItemRecyclerViewClick) {
+        mOnItemRecyclerViewClick = onItemRecyclerViewClick;
+    }
+
     @Override
     public RecyclerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_user, parent, false);
-        return new RecyclerViewHolder(v);
+        return new RecyclerViewHolder(v, mOnItemRecyclerViewClick);
     }
 
     @Override
     public void onBindViewHolder(RecyclerViewHolder holder, int position) {
-        holder.mTxtName.setText(mUsers.get(position).getLogin());
+        holder.binder(position);
     }
 
     @Override
@@ -52,10 +58,24 @@ public class ListUserRecyclerViewAdapter extends RecyclerView.Adapter<ListUserRe
     public class RecyclerViewHolder extends RecyclerView.ViewHolder {
 
         private TextView mTxtName;
+        private OnItemRecyclerViewClick mOnItemRecyclerViewClick;
+        private int position = 0 ;
 
-        public RecyclerViewHolder(View itemView) {
+        public RecyclerViewHolder(View itemView, final OnItemRecyclerViewClick onItemRecyclerViewClick) {
             super(itemView);
             mTxtName = itemView.findViewById(R.id.nameTextView);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mOnItemRecyclerViewClick = onItemRecyclerViewClick;
+                    mOnItemRecyclerViewClick.onItemClicked(position);
+                }
+            });
+        }
+
+        public void binder(int position) {
+            mTxtName.setText(mUsers.get(position).getLogin());
+            this.position = position;
         }
     }
 }

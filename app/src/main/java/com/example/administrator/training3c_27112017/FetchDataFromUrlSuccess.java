@@ -1,4 +1,4 @@
-package com.example.administrator.training3c_27112017.adapter;
+package com.example.administrator.training3c_27112017;
 
 import com.example.administrator.training3c_27112017.User;
 import java.util.List;

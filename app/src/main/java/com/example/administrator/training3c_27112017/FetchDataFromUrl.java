@@ -1,7 +1,6 @@
 package com.example.administrator.training3c_27112017;
 
 import android.os.AsyncTask;
-import com.example.administrator.training3c_27112017.adapter.FetchDataFromUrlSuccess;
 import com.google.gson.Gson;
 import java.io.BufferedReader;
 import java.io.IOException;

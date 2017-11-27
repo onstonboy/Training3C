@@ -3,7 +3,6 @@ package com.example.administrator.training3c_27112017;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import com.example.administrator.training3c_27112017.adapter.FetchDataFromUrlSuccess;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements FetchDataFromUrlSuccess {
