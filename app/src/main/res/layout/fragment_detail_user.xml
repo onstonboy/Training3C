@@ -35,5 +35,13 @@
         android:textSize="@dimen/sp_24"
         android:layout_centerHorizontal="true"
         />
+    <ImageView
+        android:layout_marginTop="@dimen/dp_10"
+        android:layout_centerInParent="true"
+        android:layout_below="@+id/idUserTextView"
+        android:id="@+id/avatarImageView"
+        android:layout_width="@dimen/dp_150"
+        android:layout_height="@dimen/dp_150"
+        />
 
 </RelativeLayout>

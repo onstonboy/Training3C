@@ -19,7 +19,29 @@
         android:id="@+id/listUserRecyclerView"
         android:layout_below="@+id/listUserTextView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="@dimen/dp_370"
         ></android.support.v7.widget.RecyclerView>
+
+    <Button
+        android:id="@+id/verticalButton"
+        android:layout_marginLeft="@dimen/dp_40"
+        android:layout_below="@+id/listUserRecyclerView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/vertical"/>
+    <Button
+        android:id="@+id/horizontalButton"
+        android:layout_toRightOf="@+id/verticalButton"
+        android:layout_alignBottom="@+id/verticalButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/horizontal"/>
+    <Button
+        android:id="@+id/gridButton"
+        android:layout_toRightOf="@+id/horizontalButton"
+        android:layout_alignBottom="@+id/horizontalButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/grid"/>
 
 </RelativeLayout>
