@@ -2,6 +2,7 @@ package com.example.administrator.training3c_27112017;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import com.example.administrator.training3c_27112017.roomdb.entity.User;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import java.util.List;

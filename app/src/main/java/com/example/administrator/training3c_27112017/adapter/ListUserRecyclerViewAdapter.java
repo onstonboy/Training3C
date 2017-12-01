@@ -1,7 +1,6 @@
 package com.example.administrator.training3c_27112017.adapter;
 
 import android.content.Context;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.example.administrator.training3c_27112017.R;
-import com.example.administrator.training3c_27112017.User;
+import com.example.administrator.training3c_27112017.roomdb.entity.User;
 import com.example.administrator.training3c_27112017.interfaces.OnItemRecyclerViewClick;
 import com.example.administrator.training3c_27112017.interfaces.OnLoadMoreListener;
 import java.util.ArrayList;
