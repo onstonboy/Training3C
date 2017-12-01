@@ -6,7 +6,6 @@ import android.widget.Toast;
 import com.example.administrator.training3c_27112017.GithubUserResponse;
 import com.example.administrator.training3c_27112017.MainApplication;
 import com.example.administrator.training3c_27112017.roomdb.database.Database;
-import com.example.administrator.training3c_27112017.roomdb.entity.User;
 
 /**
  * Created by Administrator on 11/29/17.

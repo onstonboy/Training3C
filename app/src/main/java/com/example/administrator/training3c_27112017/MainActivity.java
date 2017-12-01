@@ -4,41 +4,29 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
-import com.bumptech.glide.Glide;
 import com.example.administrator.training3c_27112017.asynctask.InsertUserToDBAsynctask;
 import com.example.administrator.training3c_27112017.retrofit.config.GitHubApi;
 import com.example.administrator.training3c_27112017.roomdb.database.Database;
-import com.example.administrator.training3c_27112017.roomdb.entity.User;
+import com.example.administrator.training3c_27112017.model.User;
+import com.example.administrator.training3c_27112017.roomdb.entity.UserEntity;
 import io.reactivex.Completable;
 import io.reactivex.CompletableObserver;
 import io.reactivex.CompletableSource;
-import io.reactivex.Flowable;
-import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
-import io.reactivex.Observer;
-import io.reactivex.Single;
-import io.reactivex.SingleSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Function;
-import io.reactivex.internal.fuseable.ScalarCallable;
 import io.reactivex.schedulers.Schedulers;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
-    private InsertUserToDBAsynctask mInsertUserToDBAsynctask;
     private Database mDatabase;
     private CompositeDisposable mCompositeDisposable;
+    private List<UserEntity> userEntities;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +62,9 @@ public class MainActivity extends AppCompatActivity {
                 .subscribe(new Consumer<GithubUserResponse>() {
                     @Override
                     public void accept(GithubUserResponse githubUserResponse) throws Exception {
-                        doInsertListUser(githubUserResponse.getItems());
+                        doCovertUserToUserEntity(githubUserResponse);
+
+                        doInsertListUser(userEntities);
                         doCreateListUserFragment();
                     }
                 }, new Consumer<Throwable>() {
@@ -86,6 +76,20 @@ public class MainActivity extends AppCompatActivity {
         mCompositeDisposable.add(disposable);
     }
 
+    private void doCovertUserToUserEntity(GithubUserResponse githubUserResponse) {
+        userEntities = new ArrayList<>();
+        for (User user : githubUserResponse.getItems()) {
+            UserEntity userEntity = new UserEntity();
+            String name = user.getLogin();
+            int id = user.getId();
+            String avatarUrl = user.getAvatarUrl();
+            userEntity.setName(name);
+            userEntity.setId(id);
+            userEntity.setAvatarUrl(avatarUrl);
+            userEntities.add(userEntity);
+        }
+    }
+
     private void doCreateListUserFragment() {
         FragmentTransaction manager = getSupportFragmentManager().beginTransaction();
         manager.add(R.id.container, new ListUserFragment(),
@@ -93,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
         manager.commitAllowingStateLoss();
     }
 
-    private void doInsertListUser(List<User> items) {
+    private void doInsertListUser(List<UserEntity> items) {
         Completable.defer(new Callable<CompletableSource>() {
             @Override
             public CompletableSource call() throws Exception {
@@ -112,8 +116,8 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onComplete() {
-                Toast.makeText(MainActivity.this, "Insert to db success", Toast.LENGTH_SHORT)
-                        .show();
+              //  Toast.makeText(MainActivity.this, "Insert to db success", Toast.LENGTH_SHORT)
+//                        .show();
             }
 
             @Override

@@ -1,35 +1,30 @@
 package com.example.administrator.training3c_27112017;
 
+import android.databinding.DataBindingUtil;
+import android.databinding.ObservableField;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
-import com.bumptech.glide.Glide;
 import com.example.administrator.training3c_27112017.adapter.ListUserRecyclerViewAdapter;
-import com.example.administrator.training3c_27112017.asynctask
-        .InsertUserWhenClickOnRecyclerViewAsyncTask;
+import com.example.administrator.training3c_27112017.databinding.FragmentListUserBinding;
 import com.example.administrator.training3c_27112017.interfaces.OnItemRecyclerViewClick;
 import com.example.administrator.training3c_27112017.roomdb.database.Database;
-import com.example.administrator.training3c_27112017.roomdb.entity.User;
+import com.example.administrator.training3c_27112017.model.User;
+import com.example.administrator.training3c_27112017.roomdb.entity.UserEntity;
 import io.reactivex.Completable;
 import io.reactivex.CompletableObserver;
-import io.reactivex.CompletableSource;
-import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,21 +33,20 @@ import java.util.concurrent.Callable;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ListUserFragment extends Fragment
-        implements OnItemRecyclerViewClick, View.OnClickListener {
+public class ListUserFragment extends Fragment implements OnItemRecyclerViewClick {
 
     private RecyclerView mRecyclerView;
     private ListUserRecyclerViewAdapter mListUserRecyclerViewAdapter;
     private GithubUserResponse userReponse;
-    private Button mBtnVertical, mBtnHorizontal, mBtnGrid;
     private LinearLayoutManager layoutManager;
     private GridLayoutManager gridLayoutManager;
     private List<User> mUsers = new ArrayList<>();
     private Database mDatabase;
     private static final String TAG = "ListUserFragment";
     private CompositeDisposable mCompositeDisposable;
-    private Button mBtnInsert;
-    private EditText mEdtName, mEdtId;
+    private FragmentListUserBinding binding;
+    public ObservableField<String> mUserName = new ObservableField<>();
+    public ObservableField<String> mID = new ObservableField<>();
 
     public static ListUserFragment newInstant(GithubUserResponse userReponse) {
         ListUserFragment fragment = new ListUserFragment();
@@ -66,26 +60,15 @@ public class ListUserFragment extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragment_list_user, container, false);
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_list_user, container, false);
+        binding.setListUserFragment(this);
+        //        binding.setButtonInsert(binding.insertUserButton);
+        View v = binding.getRoot();
+
         initViews(v);
 
-        mCompositeDisposable = new CompositeDisposable();
-        Disposable disposable = mDatabase.getUserDAO()
-                .getListUser()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<List<User>>() {
-                    @Override
-                    public void accept(List<User> users) throws Exception {
-                        mListUserRecyclerViewAdapter.updateData(users);
-                    }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) throws Exception {
+        getUserAndUpdateAdapter();
 
-                    }
-                });
-        mCompositeDisposable.add(disposable);
         //TODO lam loadmore recyclerview
         //        mListUserRecyclerViewAdapter.setOnLoadMoreListener(new OnLoadMoreListener() {
         //            @Override
@@ -117,65 +100,63 @@ public class ListUserFragment extends Fragment
         return v;
     }
 
+    private void getUserAndUpdateAdapter() {
+        mCompositeDisposable = new CompositeDisposable();
+        Disposable disposable = mDatabase.getUserDAO()
+                .getListUser()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<List<UserEntity>>() {
+                    @Override
+                    public void accept(List<UserEntity> users) throws Exception {
+                        mListUserRecyclerViewAdapter.updateData(users);
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+
+                    }
+                });
+        mCompositeDisposable.add(disposable);
+    }
+
     private void initListeners() {
-        mBtnHorizontal.setOnClickListener(this);
-        mBtnVertical.setOnClickListener(this);
-        mBtnGrid.setOnClickListener(this);
         mListUserRecyclerViewAdapter.setOnItemRecyclerViewClick(this);
-        mBtnInsert.setOnClickListener(this);
+        //        binding.getListUserFragment().mBtnInsert.setOnClickListener(this);
     }
 
     private void initViews(View v) {
-        mBtnHorizontal = v.findViewById(R.id.horizontalButton);
-        mBtnVertical = v.findViewById(R.id.verticalButton);
-        mBtnGrid = v.findViewById(R.id.gridButton);
-        mRecyclerView = v.findViewById(R.id.listUserRecyclerView);
-        mBtnInsert = v.findViewById(R.id.insertUserButton);
-        mEdtName = v.findViewById(R.id.nameEditText);
-        mEdtId = v.findViewById(R.id.idEditText);
-
         mDatabase = MainApplication.getDatabase();
         //        for (int i = 0; i < 10; i++) {
         //            mUsers.add(userReponse.getItems().get(i));
         //        }
 
         layoutManager = new LinearLayoutManager(getActivity());
-        mRecyclerView.setLayoutManager(layoutManager);
+        binding.listUserRecyclerView.setLayoutManager(layoutManager);
         //        mListUserRecyclerViewAdapter = new ListUserRecyclerViewAdapter(getActivity(),
         // mRecyclerView);
         mListUserRecyclerViewAdapter = new ListUserRecyclerViewAdapter(getActivity());
 
-        mRecyclerView.setAdapter(mListUserRecyclerViewAdapter);
+        binding.listUserRecyclerView.setAdapter(mListUserRecyclerViewAdapter);
     }
 
-    @Override
-    public void onItemClicked(int position) {
-        DetailUserFragment detailUserFragment = new DetailUserFragment();
-        FragmentTransaction manager = getActivity().getSupportFragmentManager().beginTransaction();
-        manager.replace(R.id.container, detailUserFragment.newInstant(position));
-        manager.addToBackStack(Constant.TAG_LIST_USER_FREGMENT);
-        manager.commitAllowingStateLoss();
+    public void onClickInsertButton(View view) {
+        insertUserToDB();
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.verticalButton:
-                layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-                mRecyclerView.setLayoutManager(layoutManager);
-                break;
-            case R.id.horizontalButton:
-                layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
-                mRecyclerView.setLayoutManager(layoutManager);
-                break;
-            case R.id.gridButton:
-                gridLayoutManager = new GridLayoutManager(getActivity(), 2);
-                mRecyclerView.setLayoutManager(gridLayoutManager);
-                break;
-            case R.id.insertUserButton:
-                insertUserToDB();
-                break;
-        }
+    public void onClickHorizontalButton(View view) {
+        layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        binding.listUserRecyclerView.setLayoutManager(layoutManager);
+    }
+
+    public void onClickVerticalButton(View view) {
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        binding.listUserRecyclerView.setLayoutManager(layoutManager);
+    }
+
+    public void onClickGridButton(View view) {
+        gridLayoutManager = new GridLayoutManager(getActivity(), 2);
+        binding.listUserRecyclerView.setLayoutManager(gridLayoutManager);
     }
 
     private void insertUserToDB() {
@@ -185,9 +166,11 @@ public class ListUserFragment extends Fragment
                 return Completable.fromAction(new Action() {
                     @Override
                     public void run() throws Exception {
-                        String name = mEdtName.getText().toString();
-                        int id = Integer.parseInt(mEdtId.getText().toString());
-                        User user = new User(name, id);
+                        String name = mUserName.get();
+                        int id = Integer.parseInt(mID.get());
+                        UserEntity user = new UserEntity();
+                        user.setName(name);
+                        user.setId(id);
                         mDatabase.getUserDAO().insertUser(user);
                         Toast.makeText(getActivity(), "success", Toast.LENGTH_SHORT).show();
                     }
@@ -212,6 +195,15 @@ public class ListUserFragment extends Fragment
 
                     }
                 });
+    }
+
+    @Override
+    public void onItemClicked(UserEntity user) {
+        DetailUserFragment detailUserFragment = new DetailUserFragment();
+        FragmentTransaction manager = getActivity().getSupportFragmentManager().beginTransaction();
+        manager.replace(R.id.container, detailUserFragment.newInstant(user.getId()));
+        manager.addToBackStack(Constant.TAG_LIST_USER_FREGMENT);
+        manager.commitAllowingStateLoss();
     }
 }
 
