@@ -1,6 +1,7 @@
 package com.example.administrator.training3c_27112017;
 
 import android.databinding.DataBindingUtil;
+import android.databinding.ObservableArrayList;
 import android.databinding.ObservableField;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -13,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 import com.example.administrator.training3c_27112017.adapter.ListUserRecyclerViewAdapter;
+import com.example.administrator.training3c_27112017.bindingadapter.BindingUtils;
 import com.example.administrator.training3c_27112017.databinding.FragmentListUserBinding;
 import com.example.administrator.training3c_27112017.interfaces.OnItemRecyclerViewClick;
 import com.example.administrator.training3c_27112017.roomdb.database.Database;
@@ -47,6 +49,7 @@ public class ListUserFragment extends Fragment implements OnItemRecyclerViewClic
     private FragmentListUserBinding binding;
     public ObservableField<String> mUserName = new ObservableField<>();
     public ObservableField<String> mID = new ObservableField<>();
+    public ObservableField<RecyclerView.LayoutManager> mManager = new ObservableField<>();
 
     public static ListUserFragment newInstant(GithubUserResponse userReponse) {
         ListUserFragment fragment = new ListUserFragment();
@@ -62,8 +65,12 @@ public class ListUserFragment extends Fragment implements OnItemRecyclerViewClic
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_list_user, container, false);
         binding.setListUserFragment(this);
+
         //        binding.setButtonInsert(binding.insertUserButton);
         View v = binding.getRoot();
+        layoutManager = new LinearLayoutManager(getActivity());
+        gridLayoutManager = new GridLayoutManager(getActivity(), 2);
+        mListUserRecyclerViewAdapter = new ListUserRecyclerViewAdapter(getActivity());
 
         initViews(v);
 
@@ -121,7 +128,6 @@ public class ListUserFragment extends Fragment implements OnItemRecyclerViewClic
     }
 
     private void initListeners() {
-        mListUserRecyclerViewAdapter.setOnItemRecyclerViewClick(this);
         //        binding.getListUserFragment().mBtnInsert.setOnClickListener(this);
     }
 
@@ -131,13 +137,11 @@ public class ListUserFragment extends Fragment implements OnItemRecyclerViewClic
         //            mUsers.add(userReponse.getItems().get(i));
         //        }
 
-        layoutManager = new LinearLayoutManager(getActivity());
-        binding.listUserRecyclerView.setLayoutManager(layoutManager);
         //        mListUserRecyclerViewAdapter = new ListUserRecyclerViewAdapter(getActivity(),
         // mRecyclerView);
-        mListUserRecyclerViewAdapter = new ListUserRecyclerViewAdapter(getActivity());
+        //        mListUserRecyclerViewAdapter = new ListUserRecyclerViewAdapter(getActivity());
 
-        binding.listUserRecyclerView.setAdapter(mListUserRecyclerViewAdapter);
+        //        binding.listUserRecyclerView.setAdapter(mListUserRecyclerViewAdapter);
     }
 
     public void onClickInsertButton(View view) {
@@ -146,17 +150,16 @@ public class ListUserFragment extends Fragment implements OnItemRecyclerViewClic
 
     public void onClickHorizontalButton(View view) {
         layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
-        binding.listUserRecyclerView.setLayoutManager(layoutManager);
+        mManager.set(layoutManager);
     }
 
     public void onClickVerticalButton(View view) {
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        binding.listUserRecyclerView.setLayoutManager(layoutManager);
+        mManager.set(layoutManager);
     }
 
     public void onClickGridButton(View view) {
-        gridLayoutManager = new GridLayoutManager(getActivity(), 2);
-        binding.listUserRecyclerView.setLayoutManager(gridLayoutManager);
+        mManager.set(gridLayoutManager);
     }
 
     private void insertUserToDB() {
@@ -204,6 +207,10 @@ public class ListUserFragment extends Fragment implements OnItemRecyclerViewClic
         manager.replace(R.id.container, detailUserFragment.newInstant(user.getId()));
         manager.addToBackStack(Constant.TAG_LIST_USER_FREGMENT);
         manager.commitAllowingStateLoss();
+    }
+
+    public ObservableField<RecyclerView.LayoutManager> getLayoutManager() {
+        return mManager;
     }
 }
 

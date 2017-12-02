@@ -2,7 +2,9 @@ package com.example.administrator.training3c_27112017.adapter;
 
 import android.content.Context;
 import android.databinding.DataBindingUtil;
+import android.databinding.ObservableArrayList;
 import android.databinding.ObservableField;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,7 +26,7 @@ import java.util.List;
 
 public class ListUserRecyclerViewAdapter extends RecyclerView.Adapter {
 
-    private List<UserEntity> mUsers = new ArrayList<>();
+    public List<UserEntity> mUsers = new ArrayList<>();
     private Context mContext;
     private OnItemRecyclerViewClick mOnItemRecyclerViewClick;
     private OnLoadMoreListener mOnLoadMoreListener;
@@ -35,7 +37,7 @@ public class ListUserRecyclerViewAdapter extends RecyclerView.Adapter {
     private int visibleThreshold = 5;
     private ItemUserBinding itemUserBinding;
 
-    public ListUserRecyclerViewAdapter(Context context) {
+        public ListUserRecyclerViewAdapter(Context context) {
         mContext = context;
         //        final LinearLayoutManager layoutManager =
         //                (LinearLayoutManager) recyclerView.getLayoutManager();
@@ -122,7 +124,6 @@ public class ListUserRecyclerViewAdapter extends RecyclerView.Adapter {
     public class RecyclerViewHolder extends RecyclerView.ViewHolder {
 
         private ItemUserBinding mItemUserBinding;
-        public ObservableField<String> mName = new ObservableField<>();
 
         public RecyclerViewHolder(ItemUserBinding itemView) {
             super(itemView.getRoot());

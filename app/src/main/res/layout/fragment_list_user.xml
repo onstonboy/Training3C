@@ -1,9 +1,12 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    >
     <data>
         <variable
             name="listUserFragment"
-            type="com.example.administrator.training3c_27112017.ListUserFragment"/>
+            type="com.example.administrator.training3c_27112017.ListUserFragment"
+            />
     </data>
     <RelativeLayout
         android:layout_width="match_parent"
@@ -25,6 +28,7 @@
             android:layout_width="@dimen/dp_150"
             android:layout_height="wrap_content"
             android:layout_below="@+id/listUserTextView"
+            android:inputType="text"
             android:text="@={listUserFragment.mID}"
             />
         <EditText
@@ -32,7 +36,9 @@
             android:layout_width="@dimen/dp_150"
             android:layout_height="wrap_content"
             android:layout_below="@+id/listUserTextView"
+            android:layout_toEndOf="@+id/idEditText"
             android:layout_toRightOf="@+id/idEditText"
+            android:inputType="text"
             android:text="@={listUserFragment.mUserName}"
             />
         <Button
@@ -40,10 +46,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBottom="@+id/nameEditText"
+            android:layout_toEndOf="@+id/nameEditText"
             android:layout_toRightOf="@+id/nameEditText"
-            android:text="@string/insert"
             android:onClick="@{listUserFragment::onClickInsertButton}"
 
+            android:text="@string/insert"
             />
 
         <android.support.v7.widget.RecyclerView
@@ -51,6 +58,8 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/dp_300"
             android:layout_below="@+id/nameEditText"
+            layoutManager="@{listUserFragment.layoutManager}"
+            reyclerAdapter="@{listUserFragment.listUserRecyclerViewAdapter}"
             />
 
         <Button
@@ -59,26 +68,29 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/listUserRecyclerView"
             android:layout_marginLeft="@dimen/dp_40"
-            android:text="@string/vertical"
+            android:layout_marginStart="@dimen/dp_40"
             android:onClick="@{listUserFragment::onClickVerticalButton}"
+            android:text="@string/vertical"
             />
         <Button
             android:id="@+id/horizontalButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBottom="@+id/verticalButton"
+            android:layout_toEndOf="@+id/verticalButton"
             android:layout_toRightOf="@+id/verticalButton"
-            android:text="@string/horizontal"
             android:onClick="@{listUserFragment::onClickHorizontalButton}"
+            android:text="@string/horizontal"
             />
         <Button
             android:id="@+id/gridButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBottom="@+id/horizontalButton"
+            android:layout_toEndOf="@+id/horizontalButton"
             android:layout_toRightOf="@+id/horizontalButton"
-            android:text="@string/grid"
             android:onClick="@{listUserFragment::onClickGridButton}"
+            android:text="@string/grid"
             />
 
     </RelativeLayout>
