@@ -28,6 +28,11 @@
             android:layout_height="@dimen/dp_1"
             android:background="@color/colorBlack"
             />
-
+        <ProgressBar
+            android:id="@+id/progressbar"
+            android:layout_below="@id/insertUserButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
     </LinearLayout>
 </layout>

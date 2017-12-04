@@ -1,5 +1,6 @@
 package com.example.administrator.training3c_27112017.adapter;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.databinding.ObservableArrayList;
@@ -36,6 +37,7 @@ public class ListUserRecyclerViewAdapter extends RecyclerView.Adapter {
     private boolean isLoading;
     private int visibleThreshold = 5;
     private ItemUserBinding itemUserBinding;
+    private ProgressBar mBar;
 
         public ListUserRecyclerViewAdapter(Context context) {
         mContext = context;
@@ -65,6 +67,10 @@ public class ListUserRecyclerViewAdapter extends RecyclerView.Adapter {
         mUsers.clear();
         mUsers.addAll(users);
         notifyDataSetChanged();
+    }
+
+    public ProgressBar getBar() {
+        return mBar;
     }
 
     public void setOnLoadMoreListener(OnLoadMoreListener onLoadMoreListener) {
@@ -124,15 +130,22 @@ public class ListUserRecyclerViewAdapter extends RecyclerView.Adapter {
     public class RecyclerViewHolder extends RecyclerView.ViewHolder {
 
         private ItemUserBinding mItemUserBinding;
+        private ProgressBar mBar;
 
         public RecyclerViewHolder(ItemUserBinding itemView) {
             super(itemView.getRoot());
             mItemUserBinding = itemView;
+            mBar = itemView.progressbar;
         }
 
         public void binder(UserEntity userEntity) {
             mItemUserBinding.setUserItem(new UserItem(mOnItemRecyclerViewClick, userEntity));
             mItemUserBinding.executePendingBindings();
+            getBar();
+        }
+
+        public ProgressBar getBar() {
+            return mBar;
         }
     }
 

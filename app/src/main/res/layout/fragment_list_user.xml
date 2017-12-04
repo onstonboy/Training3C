@@ -58,8 +58,11 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/dp_300"
             android:layout_below="@+id/nameEditText"
+            onScroll="@{listUserFragment.linear}"
             layoutManager="@{listUserFragment.layoutManager}"
             reyclerAdapter="@{listUserFragment.listUserRecyclerViewAdapter}"
+            getAdapter="@{listUserFragment.listUserRecyclerViewAdapter}"
+            getListUser="@{listUserFragment.users}"
             />
 
         <Button

@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,27 +23,28 @@ import com.example.administrator.training3c_27112017.model.User;
 import com.example.administrator.training3c_27112017.roomdb.entity.UserEntity;
 import io.reactivex.Completable;
 import io.reactivex.CompletableObserver;
+import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
+import org.reactivestreams.Publisher;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class ListUserFragment extends Fragment implements OnItemRecyclerViewClick {
 
-    private RecyclerView mRecyclerView;
     private ListUserRecyclerViewAdapter mListUserRecyclerViewAdapter;
-    private GithubUserResponse userReponse;
     private LinearLayoutManager layoutManager;
     private GridLayoutManager gridLayoutManager;
-    private List<User> mUsers = new ArrayList<>();
+    private List<UserEntity> mUsers = new ArrayList<>();
     private Database mDatabase;
     private static final String TAG = "ListUserFragment";
     private CompositeDisposable mCompositeDisposable;
@@ -50,6 +52,7 @@ public class ListUserFragment extends Fragment implements OnItemRecyclerViewClic
     public ObservableField<String> mUserName = new ObservableField<>();
     public ObservableField<String> mID = new ObservableField<>();
     public ObservableField<RecyclerView.LayoutManager> mManager = new ObservableField<>();
+    private EndlessRecyclerOnScrollListener endlessRecyclerOnScrollListener;
 
     public static ListUserFragment newInstant(GithubUserResponse userReponse) {
         ListUserFragment fragment = new ListUserFragment();
@@ -68,13 +71,14 @@ public class ListUserFragment extends Fragment implements OnItemRecyclerViewClic
 
         //        binding.setButtonInsert(binding.insertUserButton);
         View v = binding.getRoot();
-        layoutManager = new LinearLayoutManager(getActivity());
-        gridLayoutManager = new GridLayoutManager(getActivity(), 2);
-        mListUserRecyclerViewAdapter = new ListUserRecyclerViewAdapter(getActivity());
-
         initViews(v);
 
+        mManager.set(layoutManager);
+
+        mListUserRecyclerViewAdapter.setOnItemRecyclerViewClick(this);
+
         getUserAndUpdateAdapter();
+        getUserFromDB();
 
         //TODO lam loadmore recyclerview
         //        mListUserRecyclerViewAdapter.setOnLoadMoreListener(new OnLoadMoreListener() {
@@ -102,9 +106,15 @@ public class ListUserFragment extends Fragment implements OnItemRecyclerViewClic
         //                }
         //            }
         //        });
-        initListeners();
 
         return v;
+    }
+
+    private void customLoadMoreDataFromApi(int currentPage) {
+
+        int curSize = mListUserRecyclerViewAdapter.getItemCount();
+        Toast.makeText(getActivity(), "" + curSize, Toast.LENGTH_SHORT).show();
+        mListUserRecyclerViewAdapter.notifyItemRangeInserted(curSize, mUsers.size() - 1);
     }
 
     private void getUserAndUpdateAdapter() {
@@ -116,7 +126,7 @@ public class ListUserFragment extends Fragment implements OnItemRecyclerViewClic
                 .subscribe(new Consumer<List<UserEntity>>() {
                     @Override
                     public void accept(List<UserEntity> users) throws Exception {
-                        mListUserRecyclerViewAdapter.updateData(users);
+//                        mListUserRecyclerViewAdapter.updateData(users);
                     }
                 }, new Consumer<Throwable>() {
                     @Override
@@ -127,21 +137,40 @@ public class ListUserFragment extends Fragment implements OnItemRecyclerViewClic
         mCompositeDisposable.add(disposable);
     }
 
-    private void initListeners() {
-        //        binding.getListUserFragment().mBtnInsert.setOnClickListener(this);
+    private void getUserFromDB() {
+        mCompositeDisposable = new CompositeDisposable();
+        Disposable disposable = mDatabase.getUserDAO()
+                .getListUser()
+                .flatMap(new Function<List<UserEntity>, Flowable<UserEntity>>() {
+                    @Override
+                    public Flowable<UserEntity> apply(List<UserEntity> list) throws Exception {
+                        return Flowable.fromIterable(list);
+                    }
+                })
+                .take(10)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<UserEntity>() {
+                    @Override
+                    public void accept(UserEntity userEntity) throws Exception {
+                        mUsers.add(userEntity);
+                        mListUserRecyclerViewAdapter.updateData(mUsers);
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+
+                    }
+                });
+        mCompositeDisposable.add(disposable);
     }
 
     private void initViews(View v) {
         mDatabase = MainApplication.getDatabase();
-        //        for (int i = 0; i < 10; i++) {
-        //            mUsers.add(userReponse.getItems().get(i));
-        //        }
+        layoutManager = new LinearLayoutManager(getActivity());
+        gridLayoutManager = new GridLayoutManager(getActivity(), 2);
+        mListUserRecyclerViewAdapter = new ListUserRecyclerViewAdapter(getActivity());
 
-        //        mListUserRecyclerViewAdapter = new ListUserRecyclerViewAdapter(getActivity(),
-        // mRecyclerView);
-        //        mListUserRecyclerViewAdapter = new ListUserRecyclerViewAdapter(getActivity());
-
-        //        binding.listUserRecyclerView.setAdapter(mListUserRecyclerViewAdapter);
     }
 
     public void onClickInsertButton(View view) {
@@ -211,6 +240,22 @@ public class ListUserFragment extends Fragment implements OnItemRecyclerViewClic
 
     public ObservableField<RecyclerView.LayoutManager> getLayoutManager() {
         return mManager;
+    }
+
+    public LinearLayoutManager getLinear(){
+        return layoutManager;
+    }
+
+    public ListUserRecyclerViewAdapter getListUserRecyclerViewAdapter() {
+        return mListUserRecyclerViewAdapter;
+    }
+
+    public EndlessRecyclerOnScrollListener getEndlessRecyclerOnScrollListener() {
+        return endlessRecyclerOnScrollListener;
+    }
+
+    public List<UserEntity> getUsers() {
+        return mUsers;
     }
 }
 
