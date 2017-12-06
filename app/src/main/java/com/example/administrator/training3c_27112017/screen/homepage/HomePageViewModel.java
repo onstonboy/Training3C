@@ -44,8 +44,8 @@ public class HomePageViewModel extends BaseObservable implements HomePageContrac
 
     @Override
     public void onItemRecyclerViewClick(User item) {
-//        mPresenter.onItemUserClicked(item);
-        Log.d(TAG, "onItemRecyclerViewClick: ");
+        mPresenter.onItemUserClicked(item);
+//        Log.d(TAG, "onItemRecyclerViewClick: ");
     }
 
     @Override

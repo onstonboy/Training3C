@@ -31,23 +31,17 @@ final class HomePagePresenter implements HomePageContract.Presenter {
     @Override
     public void onStart() {
         searchUsers("abc", 50);
-        onStart();
     }
 
     @Override
     public void onStop() {
-        onStop();
         mCompositeDisposable.clear();
     }
 
     @Override
     public void onItemUserClicked(User user) {
-                mPresenter.onItemUserClicked(user);
-//        Log.d(TAG, "onItemRecyclerViewClick: " + user.getLogin());
-    }
-
-    public void setPresenter(HomePageContract.Presenter presenter) {
-        mPresenter = presenter;
+//                mPresenter.onItemUserClicked(user);
+        Log.d(TAG, "onItemRecyclerViewClick: " + user.getLogin());
     }
 
     @Override

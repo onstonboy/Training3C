@@ -8,7 +8,7 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import com.example.administrator.training3c_27112017.R;
 import com.example.administrator.training3c_27112017.data.model.User;
-import com.example.administrator.training3c_27112017.databinding.ItemHomePageBinding;
+import com.example.administrator.training3c_27112017.databinding.ItemUserBinding;
 import com.example.administrator.training3c_27112017.screen.BaseRecyclerViewAdapter;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,9 +37,9 @@ public class HomePageAdapter extends BaseRecyclerViewAdapter<HomePageAdapter.Ite
 
     @Override
     public ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        ItemHomePageBinding binding =
+        ItemUserBinding binding =
                 DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()),
-                        R.layout.item_home_page, parent, false);
+                        R.layout.item_user, parent, false);
         return new ItemViewHolder(binding, mItemClickListener);
     }
 
@@ -62,10 +62,10 @@ public class HomePageAdapter extends BaseRecyclerViewAdapter<HomePageAdapter.Ite
      */
     static class ItemViewHolder extends RecyclerView.ViewHolder {
 
-        private ItemHomePageBinding mBinding;
+        private ItemUserBinding mBinding;
         private BaseRecyclerViewAdapter.OnRecyclerViewItemClickListener<User> mItemClickListener;
 
-        ItemViewHolder(ItemHomePageBinding binding,
+        ItemViewHolder(ItemUserBinding binding,
                 BaseRecyclerViewAdapter.OnRecyclerViewItemClickListener<User> listener) {
             super(binding.getRoot());
             mBinding = binding;

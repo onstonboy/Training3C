@@ -1,6 +1,5 @@
 package com.example.administrator.training3c_27112017.screen.homepage;
 
-
 import android.databinding.BaseObservable;
 import android.view.View;
 import com.example.administrator.training3c_27112017.data.model.User;
@@ -21,12 +20,12 @@ public class ItemHomePageViewModel extends BaseObservable {
         mItemClickListener = itemClickListener;
     }
 
-    public String getUserLogin(){
+    public String getUserLogin() {
         return mUser.getLogin();
     }
 
-    public void onItemClicked(View view){
-        if (mItemClickListener == null){
+    public void onItemClicked(View view) {
+        if (mItemClickListener == null) {
             return;
         }
         mItemClickListener.onItemRecyclerViewClick(mUser);
